@@ -6,13 +6,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Esta clase se encarga de generar una CURP (Clave Única de Registro de Población) 
- * para una persona a partir de su nombre, apellidos, fecha de nacimiento, sexo y estado de nacimiento.
- * La CURP es un identificador único para cada ciudadano en México.
- * 
- * Los métodos en esta clase realizan varias operaciones sobre los datos proporcionados, 
- * como limpieza de texto, extracción de letras, validación de sexo y formato de fecha.
- * 
+ * Esta clase se encarga de generar una CURP (Clave Única de Registro de
+ * Población) para una persona a partir de su nombre, apellidos, fecha de
+ * nacimiento, sexo y estado de nacimiento. La CURP es un identificador único
+ * para cada ciudadano en México.
+ *
+ * Los métodos en esta clase realizan varias operaciones sobre los datos
+ * proporcionados, como limpieza de texto, extracción de letras, validación de
+ * sexo y formato de fecha.
+ *
  * @author ben_9
  */
 public class CurpGenerador {
@@ -58,8 +60,8 @@ public class CurpGenerador {
     }
 
     /**
-     * Este método limpia un texto para que esté en mayúsculas y elimine cualquier caracter
-     * que no sea una letra del abecedario o una "Ñ".
+     * Este método limpia un texto para que esté en mayúsculas y elimine
+     * cualquier caracter que no sea una letra del abecedario o una "Ñ".
      *
      * @param texto El texto a limpiar.
      * @return El texto limpio en mayúsculas.
@@ -69,8 +71,8 @@ public class CurpGenerador {
     }
 
     /**
-     * Este método busca la primera vocal interna (después de la primera letra) de un texto dado.
-     * Si no encuentra una vocal interna, devuelve "X".
+     * Este método busca la primera vocal interna (después de la primera letra)
+     * de un texto dado. Si no encuentra una vocal interna, devuelve "X".
      *
      * @param texto El texto del cual extraer la vocal interna.
      * @return La primera vocal interna o "X" si no se encuentra.
@@ -82,8 +84,9 @@ public class CurpGenerador {
     }
 
     /**
-     * Este método busca la primera consonante interna (después de la primera letra) de un texto dado.
-     * Si no encuentra una consonante interna, devuelve "X".
+     * Este método busca la primera consonante interna (después de la primera
+     * letra) de un texto dado. Si no encuentra una consonante interna, devuelve
+     * "X".
      *
      * @param texto El texto del cual extraer la consonante interna.
      * @return La primera consonante interna o "X" si no se encuentra.
@@ -95,9 +98,37 @@ public class CurpGenerador {
     }
 
     /**
-     * Este es el método principal que genera la CURP a partir de los datos proporcionados.
-     * La CURP se genera siguiendo una serie de reglas basadas en los apellidos, nombre, fecha de nacimiento,
-     * sexo y estado de nacimiento.
+     * Calcula la homoclave de una CURP, que es un carácter alfanumérico
+     * adicional al final de la CURP. La homoclave es generada aleatoriamente
+     * para propósitos de unicidad.
+     *
+     *
+     * Esta implementación genera una homoclave compuesta por un carácter
+     * aleatorio entre "A" y "Z" seguido de un dígito aleatorio entre 0 y 9.
+     * Esto asegura que la CURP tenga una combinación única de letras y números
+     * al final.
+     *
+     * 
+     * En el sistema mexicano, la homoclave puede seguir otros criterios
+     * específicos dependiendo de las reglas y requerimientos. Este método
+     * ofrece una generación de ejemplo.
+     *
+     * @return Una cadena de texto que representa la homoclave generada,
+     * compuesta por una letra (A-Z) y un número (0-9).
+     */
+    private static String calcularHomoclave() {
+        // Aquí puedes agregar el algoritmo para calcular la homoclave según el criterio del sistema mexicano.
+        // Como ejemplo, generamos una homoclave aleatoria con un número y una letra.
+        int numeroAleatorio = (int) (Math.random() * 10); // Número aleatorio del 0 al 9
+        char letraAleatoria = (char) (Math.random() * 26 + 'A'); // Letra aleatoria de la A a la Z
+        return letraAleatoria + String.valueOf(numeroAleatorio);
+    }
+
+    /**
+     * Este es el método principal que genera la CURP a partir de los datos
+     * proporcionados. La CURP se genera siguiendo una serie de reglas basadas
+     * en los apellidos, nombre, fecha de nacimiento, sexo y estado de
+     * nacimiento.
      *
      * @param nombre El nombre de la persona.
      * @param apellidoPaterno El apellido paterno de la persona.
@@ -140,12 +171,18 @@ public class CurpGenerador {
         String consonanteMaterno = primeraConsonanteInterna(apellidoMaterno);
         String consonanteNombre = primeraConsonanteInterna(nombre);
 
-        // Generar un número aleatorio para la homoclave (parte final de la CURP).
-        int homoclave = (int) (Math.random() * 10);
+        // Construye la CURP base sin la homoclave
+        String curpBase = primeraLetraApellidoPaterno + primeraVocalInternaApellidoPaterno + primeraLetraApellidoMaterno
+                + primeraLetraNombre + anioFormato + mesFormato + diaFormato + sexo + entidad
+                + consonantePaterno + consonanteMaterno + consonanteNombre;
+
+        // Agrega a la curp base la homoclave calculada
+        String homoclave = calcularHomoclave();
+
+        // Construye la CURP final
+        String curp = curpBase + homoclave;
 
         // Devolver la CURP concatenando todas las partes formadas.
-        return primeraLetraApellidoPaterno + primeraVocalInternaApellidoPaterno + primeraLetraApellidoMaterno
-                + primeraLetraNombre + anioFormato + mesFormato + diaFormato + sexo + entidad
-                + consonantePaterno + consonanteMaterno + consonanteNombre + homoclave;
+        return curp;
     }
 }
